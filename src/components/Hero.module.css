@@ -1,0 +1,196 @@
+.heroSection {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.backgroundDecoration1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 500px;
+    background: var(--primary-glow);
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+    transform: translate(50%, -50%);
+}
+
+.backgroundDecoration2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 500px;
+    height: 500px;
+    background: var(--secondary);
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.1;
+    z-index: -1;
+    transform: translate(-50%, 50%);
+}
+
+.grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+}
+
+.subtitle {
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.title {
+    margin-bottom: 1rem;
+}
+
+.description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    max-width: 32rem;
+    color: var(--text-muted);
+}
+
+.ctaGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.socials {
+    display: flex;
+    gap: 1rem;
+}
+
+.socialIcon {
+    padding: 0.5rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.socialIcon:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.imageWrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.profileContainer {
+    position: relative;
+    width: 18rem;
+    height: 18rem;
+}
+
+.glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top right, var(--primary), var(--secondary));
+    border-radius: 50%;
+    opacity: 0.2;
+    filter: blur(24px);
+}
+
+.imageFrame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--card-bg);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.floatingBadge {
+    position: absolute;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem;
+    z-index: 10;
+}
+
+.badgeTop {
+    top: -1rem;
+    right: -1rem;
+}
+
+.badgeBottom {
+    bottom: 2rem;
+    left: -2rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.employerLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.employerLink:hover {
+    opacity: 0.8;
+}
+
+.employerLogo {
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.employerText {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.employerLabel {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.employerName {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profileContainer {
+        width: 24rem;
+        height: 24rem;
+    }
+}

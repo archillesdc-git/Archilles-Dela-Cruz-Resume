@@ -1,0 +1,181 @@
+.experienceSection {
+    background: var(--bg-color);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.timeline {
+    position: relative;
+    max-width: 64rem;
+    margin: 0 auto;
+}
+
+/* Vertical Line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    /* Mobile: Line on left */
+    width: 2px;
+    background: var(--primary);
+    opacity: 0.3;
+}
+
+.timelineItem {
+    position: relative;
+    margin-bottom: 3rem;
+    padding-left: 3rem;
+    /* Space for line */
+}
+
+.dot {
+    position: absolute;
+    left: 11px;
+    /* Center of 2px line at 20px -> 20 + 2/2 = 21. Dot 20px => left 11px */
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--primary);
+    border: 4px solid var(--bg-color);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.content {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--glass-border);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.duration {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.role {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.company {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.description {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.list {
+    padding-left: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    list-style-type: disc;
+}
+
+.listItem {
+    margin-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .timeline::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .timelineItem {
+        width: 50%;
+        padding-left: 0;
+        margin-bottom: 0;
+        /* Handled by grid or flow logic, but usually alternate takes space */
+        padding-bottom: 3rem;
+    }
+
+    /* Left Side Items */
+    .timelineItem:nth-child(even) {
+        /* Actually in my loop logic I might use left/right prop, but using nth-child */
+        left: 0;
+        padding-right: 3rem;
+        text-align: right;
+    }
+
+    /* Right Side Items */
+    .timelineItem:nth-child(odd) {
+        /* Wait, if width 50%, odd is first.
+        Usually:
+        Item 1 (Right or Left?)
+        If Item 1 is Left: left: 0.
+        If Item 2 is Right: left: 50%; padding-left: 3rem;
+        
+        Let's assume alternating.
+        Odd: Left? 
+        Even: Right?
+        
+        Let's try:
+        Odd -> Left side
+        Even -> Right side
+     */
+        left: 0;
+        padding-right: 3rem;
+        text-align: right;
+    }
+
+    .timelineItem:nth-child(even) {
+        left: 50%;
+        padding-left: 3rem;
+        text-align: left;
+    }
+
+    /* Fix dot position for desktop */
+    .timelineItem:nth-child(odd) .dot {
+        left: auto;
+        right: -10px;
+        /* Right edge + half dot width? Line is at right edge of this 50% box? No line is at 50% of parent.
+                     This box width 50%. So right edge is line.
+                     Right: -10px (half of 20px) should center it.
+                  */
+    }
+
+    .timelineItem:nth-child(even) .dot {
+        left: -10px;
+    }
+
+    /* Reset list alignment for right-aligned items */
+    .timelineItem:nth-child(odd) .list {
+        list-style-position: inside;
+        /* Helps with alignment */
+        direction: rtl;
+        /* Tricky for bullets. Better to maintain text-align right and standard bullets? */
+        display: inline-block;
+        text-align: right;
+    }
+
+    .timelineItem:nth-child(odd) .listItem {
+        text-align: right;
+        direction: ltr;
+        /* Reset text direction */
+    }
+
+    /* Actually, simpler to just start bullet from right? Or use no bullets on right align, just bold text?
+      I'll keep it simple.
+    */
+}
