@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FaReact } from 'react-icons/fa';
-import { SiTypescript, SiNextdotjs, SiTailwindcss, SiPrisma, SiTrpc } from 'react-icons/si';
+import { SiTypescript, SiNextdotjs, SiTailwindcss, SiPrisma, SiTrpc, SiPhp } from 'react-icons/si';
 import { RiShieldKeyholeLine } from 'react-icons/ri';
 import styles from './Skills.module.css';
 
@@ -22,6 +22,7 @@ const skills = [
         category: "Core Technologies",
         items: [
             { name: "React", icon: <FaReact className="text-[#61dafb]" /> },
+            { name: "PHP", icon: <SiPhp className="text-[#777bb4]" /> },
         ]
     }
 ];
