@@ -89,37 +89,45 @@ export default function ViewsRating() {
 
     return (
         <>
-            <div className={styles.container}>
-                {/* Views Counter */}
-                <div className={styles.viewsBox}>
-                    <FaEye className={styles.viewsIcon} />
-                    <span className={styles.viewsCount}>{views}</span>
-                    <span className={styles.viewsLabel}>Views</span>
+            <div className={styles.wrapper}>
+                {/* Tab that sticks out */}
+                <div className={styles.tab}>
+                    <FaStar className={styles.tabIcon} />
+                    RATE
                 </div>
 
-                {/* Star Rating */}
-                <div className={styles.ratingBox}>
-                    <span className={styles.ratingLabel}>Rate Me</span>
-                    <div className={styles.stars}>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                                key={star}
-                                className={`${styles.starButton} ${hasRated ? styles.disabled : ''}`}
-                                onClick={() => handleStarClick(star)}
-                                onMouseEnter={() => !hasRated && setHoverRating(star)}
-                                onMouseLeave={() => setHoverRating(0)}
-                                disabled={hasRated}
-                            >
-                                <FaStar
-                                    className={`${styles.star} ${(hoverRating >= star || (hasRated && parseInt(localStorage.getItem('portfolio_user_rating') || '0') >= star))
+                <div className={styles.container}>
+                    {/* Views Counter */}
+                    <div className={styles.viewsBox}>
+                        <FaEye className={styles.viewsIcon} />
+                        <span className={styles.viewsCount}>{views}</span>
+                        <span className={styles.viewsLabel}>Views</span>
+                    </div>
+
+                    {/* Star Rating */}
+                    <div className={styles.ratingBox}>
+                        <span className={styles.ratingLabel}>Rate Me</span>
+                        <div className={styles.stars}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    className={`${styles.starButton} ${hasRated ? styles.disabled : ''}`}
+                                    onClick={() => handleStarClick(star)}
+                                    onMouseEnter={() => !hasRated && setHoverRating(star)}
+                                    onMouseLeave={() => setHoverRating(0)}
+                                    disabled={hasRated}
+                                >
+                                    <FaStar
+                                        className={`${styles.star} ${(hoverRating >= star || (hasRated && parseInt(localStorage.getItem('portfolio_user_rating') || '0') >= star))
                                             ? styles.starFilled
                                             : styles.starEmpty
-                                        }`}
-                                />
-                            </button>
-                        ))}
+                                            }`}
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                        {hasRated && <span className={styles.ratedText}>Thanks for rating! 🙏</span>}
                     </div>
-                    {hasRated && <span className={styles.ratedText}>Thanks for rating! 🙏</span>}
                 </div>
             </div>
 

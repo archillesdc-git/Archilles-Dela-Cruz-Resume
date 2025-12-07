@@ -1,60 +1,53 @@
-.container {
+.wrapper {
     position: fixed;
     top: 50%;
     left: 0;
-    transform: translateY(-50%) translateX(-100%);
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+}
+
+.container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    z-index: 100;
     padding: 1rem;
-    padding-left: 0.5rem;
+    transform: translateX(-100%);
     transition: transform 0.3s ease;
 }
 
-.container::before {
-    content: '';
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 30px;
-    height: 100vh;
-    z-index: 99;
+.wrapper:hover .container {
+    transform: translateX(0);
 }
 
-.container:hover,
-.container:focus-within {
-    transform: translateY(-50%) translateX(0);
-}
-
-/* Hover trigger area */
-.hoverTrigger {
-    position: fixed;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 150px;
-    z-index: 99;
+.tab {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 1rem 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
     cursor: pointer;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: padding 0.3s;
 }
 
-.hoverTrigger::after {
-    content: '';
-    position: absolute;
-    left: 3px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 40px;
-    background: var(--primary);
-    border-radius: 4px;
-    opacity: 0.5;
-    transition: opacity 0.2s;
+.wrapper:hover .tab {
+    opacity: 0;
+    width: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-.hoverTrigger:hover::after {
-    opacity: 1;
+.tabIcon {
+    font-size: 1rem;
 }
 
 .viewsBox,
