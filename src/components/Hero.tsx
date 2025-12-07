@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaFacebook } from 'react-icons/fa';
 import styles from './Hero.module.css';
 
 export default function Hero() {
@@ -40,8 +40,11 @@ export default function Hero() {
                     </div>
 
                     <div className={styles.socials}>
-                        <a href="mailto:archillesdelacruz@outlook.com" className={styles.socialIcon}>
-                            <FaEnvelope />
+                        <a href="https://www.facebook.com/archillesdc" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
+                            <FaFacebook />
+                        </a>
+                        <a href="https://github.com/archillesdc-git" target="_blank" rel="noopener noreferrer" className={styles.socialIcon}>
+                            <FaGithub />
                         </a>
                     </div>
                 </motion.div>
