@@ -321,7 +321,7 @@ export default function AIAssistant() {
                 style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
             >
                 <FaRobot />
-                <span className={styles.buttonLabel}>Ask AI</span>
+                <span className={styles.buttonLabel}>AI'k</span>
             </motion.button>
 
             <AnimatePresence>
@@ -339,7 +339,7 @@ export default function AIAssistant() {
                                     <FaRobot />
                                 </div>
                                 <div>
-                                    <h4 className={styles.aiName}>Archilles&apos; AI</h4>
+                                    <h4 className={styles.aiName}>AI'k Assistant</h4>
                                     <span className={styles.aiStatus}>
                                         <span className={styles.statusDot}></span>
                                         {isComposeMode ? '✍️ Writing...' : '🟢 Online'}
