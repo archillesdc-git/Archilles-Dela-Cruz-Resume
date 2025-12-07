@@ -2,27 +2,22 @@
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    padding: 0.75rem 1.25rem;
+    border-radius: 9999px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     border: none;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
     cursor: pointer;
     box-shadow: 0 4px 20px var(--primary-glow);
     z-index: 999;
-    gap: 0.125rem;
 }
 
 .buttonLabel {
-    font-size: 0.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 700;
     letter-spacing: 0.05em;
 }
 

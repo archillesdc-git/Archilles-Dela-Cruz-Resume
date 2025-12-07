@@ -320,8 +320,7 @@ export default function AIAssistant() {
                 animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? 20 : 0 }}
                 style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
             >
-                <FaRobot />
-                <span className={styles.buttonLabel}>AI'k</span>
+                <span className={styles.buttonLabel}>ASK AI'K</span>
             </motion.button>
 
             <AnimatePresence>
