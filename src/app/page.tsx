@@ -8,6 +8,7 @@ import Certificates from '@/components/Certificates';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import AIAssistant from '@/components/AIAssistant';
+import ViewsRating from '@/components/ViewsRating';
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Contact />
       <Footer />
       <AIAssistant />
+      <ViewsRating />
     </main>
   );
 }
