@@ -26,6 +26,7 @@ export default function AIAssistant() {
     const [isTyping, setIsTyping] = useState(false);
     const [isSendingEmail, setIsSendingEmail] = useState(false);
     const [pendingEmailMessage, setPendingEmailMessage] = useState('');
+    const [emailCopied, setEmailCopied] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -238,14 +239,21 @@ export default function AIAssistant() {
                                     {msg.showEmailButton && msg.role === 'ai' && (
                                         <motion.button
                                             className={styles.emailButton}
-                                            onClick={() => {
-                                                window.location.href = 'mailto:archillesdelacruz@outlook.com?subject=Inquiry%20from%20Portfolio';
+                                            onClick={async () => {
+                                                try {
+                                                    await navigator.clipboard.writeText('archillesdelacruz@outlook.com');
+                                                    setEmailCopied(true);
+                                                    setTimeout(() => setEmailCopied(false), 2000);
+                                                } catch {
+                                                    // Fallback: open mailto
+                                                    window.open('mailto:archillesdelacruz@outlook.com?subject=Inquiry%20from%20Portfolio');
+                                                }
                                             }}
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.3, delay: 0.2 }}
                                         >
-                                            <FaEnvelope /> Email Archilles
+                                            <FaEnvelope /> {emailCopied ? '✓ Email Copied!' : 'Copy Email'}
                                         </motion.button>
                                     )}
                                 </div>
