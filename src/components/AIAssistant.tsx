@@ -236,15 +236,17 @@ export default function AIAssistant() {
                                         {msg.content}
                                     </motion.div>
                                     {msg.showEmailButton && msg.role === 'ai' && (
-                                        <motion.a
-                                            href="mailto:archillesdelacruz@outlook.com?subject=Inquiry from Portfolio"
+                                        <motion.button
                                             className={styles.emailButton}
+                                            onClick={() => {
+                                                window.location.href = 'mailto:archillesdelacruz@outlook.com?subject=Inquiry%20from%20Portfolio';
+                                            }}
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.3, delay: 0.2 }}
                                         >
                                             <FaEnvelope /> Email Archilles
-                                        </motion.a>
+                                        </motion.button>
                                     )}
                                 </div>
                             ))}
