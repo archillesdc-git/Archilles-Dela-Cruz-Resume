@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaStar, FaEye, FaTimes, FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
@@ -11,8 +12,12 @@ const EMAILJS_SERVICE_ID = "service_rtivf1l";
 const EMAILJS_TEMPLATE_ID = "template_bbw20uh";
 const EMAILJS_PUBLIC_KEY = "zseLnDIgoVQw3j6Vz";
 
-export default function ViewsRating() {
-    const [views, setViews] = useState(0);
+function ViewsRatingContent() {
+    const searchParams = useSearchParams();
+    const isOwner = searchParams.get('owner') === 'archilles';
+
+    const [views, setViews] = useState<number | null>(null);
+    const [isLoadingViews, setIsLoadingViews] = useState(true);
     const [showRatingModal, setShowRatingModal] = useState(false);
     const [selectedRating, setSelectedRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -23,27 +28,39 @@ export default function ViewsRating() {
     const [hasRated, setHasRated] = useState(false);
 
     useEffect(() => {
-        // Check if user has already viewed/rated
-        const hasViewed = localStorage.getItem('portfolio_viewed');
+        // Check if user has already rated
         const hasRatedBefore = localStorage.getItem('portfolio_rated');
-
         if (hasRatedBefore) {
             setHasRated(true);
         }
 
-        // Get current views
-        const currentViews = parseInt(localStorage.getItem('portfolio_views') || '0');
+        // Track this visit via API (IP-based)
+        const trackVisit = async () => {
+            try {
+                await fetch('/api/views', { method: 'POST' });
+            } catch (error) {
+                console.error('Failed to track visit:', error);
+            }
+        };
 
-        if (!hasViewed) {
-            // New visitor - increment views
-            const newViews = currentViews + 1;
-            localStorage.setItem('portfolio_views', newViews.toString());
-            localStorage.setItem('portfolio_viewed', 'true');
-            setViews(newViews);
-        } else {
-            setViews(currentViews);
-        }
-    }, []);
+        // Get view count if owner
+        const getViews = async () => {
+            if (isOwner) {
+                try {
+                    const response = await fetch('/api/views?owner=archilles');
+                    const data = await response.json();
+                    setViews(data.views);
+                } catch (error) {
+                    console.error('Failed to get views:', error);
+                    setViews(0);
+                }
+            }
+            setIsLoadingViews(false);
+        };
+
+        trackVisit();
+        getViews();
+    }, [isOwner]);
 
     const handleStarClick = (rating: number) => {
         if (hasRated) return;
@@ -97,14 +114,22 @@ export default function ViewsRating() {
                 </div>
 
                 <div className={styles.container}>
-                    {/* Views Counter */}
-                    <div className={styles.viewsBox}>
-                        <FaEye className={styles.viewsIcon} />
-                        <span className={styles.viewsCount}>{views}</span>
-                        <span className={styles.viewsLabel}>Views</span>
-                    </div>
+                    {/* Views Counter - ONLY visible to owner */}
+                    {isOwner && (
+                        <div className={styles.viewsBox}>
+                            <FaEye className={styles.viewsIcon} />
+                            <span className={styles.viewsCount}>
+                                {isLoadingViews ? (
+                                    <FaSpinner className={styles.spinner} />
+                                ) : (
+                                    views ?? 0
+                                )}
+                            </span>
+                            <span className={styles.viewsLabel}>Views</span>
+                        </div>
+                    )}
 
-                    {/* Star Rating */}
+                    {/* Star Rating - Visible to everyone */}
                     <div className={styles.ratingBox}>
                         <span className={styles.ratingLabel}>Rate Me</span>
                         <div className={styles.stars}>
@@ -217,5 +242,14 @@ export default function ViewsRating() {
                 )}
             </AnimatePresence>
         </>
+    );
+}
+
+// Export with Suspense wrapper to handle useSearchParams
+export default function ViewsRating() {
+    return (
+        <Suspense fallback={null}>
+            <ViewsRatingContent />
+        </Suspense>
     );
 }
