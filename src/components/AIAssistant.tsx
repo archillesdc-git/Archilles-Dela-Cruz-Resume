@@ -130,9 +130,30 @@ export default function AIAssistant() {
                     const success = await sendContactEmail(finalInfo.name, finalInfo.email, finalInfo.message);
 
                     if (success) {
+                        // Fetch weather - only show message if raining/stormy
+                        let weatherMsg = '';
+                        try {
+                            const weatherRes = await fetch('/api/weather');
+                            const weather = await weatherRes.json();
+                            if (weather && !weather.fallback) {
+                                const desc = weather.description?.toLowerCase() || '';
+                                const isRainy = desc.includes('rain') || desc.includes('drizzle');
+                                const isStormy = desc.includes('storm') || desc.includes('thunder');
+
+                                if (isStormy) {
+                                    weatherMsg = ` ⛈️ Note: There's a storm in GenSan right now (${weather.temp}°C), so Archilles might respond a bit later once it clears up.`;
+                                } else if (isRainy) {
+                                    weatherMsg = ` 🌧️ It's currently raining in GenSan (${weather.temp}°C), so Archilles might take a bit longer to respond.`;
+                                }
+                                // No message for sunny/cloudy - only rain/storm
+                            }
+                        } catch {
+                            // Weather fetch failed, skip weather message
+                        }
+
                         setMessages(prev => [...prev, {
                             role: 'ai',
-                            content: `✅ Done! Your message has been sent to Archilles! He'll get back to you at ${finalInfo.email} soon. Is there anything else you'd like to know?`
+                            content: `✅ Done! Your message has been sent to Archilles! He'll get back to you at ${finalInfo.email} soon.${weatherMsg} Is there anything else you'd like to know?`
                         }]);
                     } else {
                         setMessages(prev => [...prev, {
