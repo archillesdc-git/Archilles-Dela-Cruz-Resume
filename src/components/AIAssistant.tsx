@@ -105,19 +105,23 @@ export default function AIAssistant() {
         setIsTyping(true);
 
         try {
-            // Check if user is asking about weather
-            const isWeatherQuestion = /weather|clima|ulan|rain|sunny|hot|cold|init|lamig|maulan|temperatura|temperature/i.test(userMessage);
+            // Expanded weather keyword detection (Tagalog, English, common variations)
+            const weatherKeywords = /weather|clima|climate|panahon|ulan|ulap|rain|raining|sunny|araw|hot|cold|init|mainit|lamig|malamig|maulan|temperatura|temperature|forecast|storm|bagyo|thunder|kidlat|cloudy|maulap|humid|halumigmig|dyan ba|dyan ngayon|sa gensan|sa lugar/i;
+            const isWeatherQuestion = weatherKeywords.test(userMessage);
+
+            let weatherData = null;
             let weatherContext = '';
 
             if (isWeatherQuestion) {
                 try {
                     const weatherRes = await fetch('/api/weather');
-                    const weather = await weatherRes.json();
-                    if (!weather.fallback) {
-                        weatherContext = ` [CURRENT WEATHER IN GENSAN: ${weather.icon} ${weather.description}, ${weather.temp}°C]`;
-                    }
+                    weatherData = await weatherRes.json();
+
+                    // Always include weather info when asked (even fallback gives GenSan typical weather)
+                    weatherContext = `\n\n[SYSTEM: User is asking about weather. Current weather in General Santos City, Philippines: ${weatherData.icon} ${weatherData.description}, Temperature: ${weatherData.temp}°C. Use this EXACT data in your response. Respond naturally in the user's language (Tagalog/English/Taglish).]`;
                 } catch {
-                    // Weather fetch failed, continue without it
+                    // Weather fetch failed, use typical GenSan weather
+                    weatherContext = `\n\n[SYSTEM: User is asking about weather. General Santos City typically has tropical weather, around 27-32°C. Respond naturally.]`;
                 }
             }
 
