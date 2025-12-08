@@ -236,20 +236,15 @@ export default function AIAssistant() {
                                         {msg.content}
                                     </motion.div>
                                     {msg.showEmailButton && msg.role === 'ai' && (
-                                        <motion.button
+                                        <motion.a
+                                            href="mailto:archillesdelacruz@outlook.com?subject=Inquiry from Portfolio"
                                             className={styles.emailButton}
-                                            onClick={handleSendEmail}
-                                            disabled={isSendingEmail}
                                             initial={{ opacity: 0, scale: 0.9 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.3, delay: 0.2 }}
                                         >
-                                            {isSendingEmail ? (
-                                                <><FaSpinner className={styles.spinner} /> Sending...</>
-                                            ) : (
-                                                <><FaEnvelope /> ✉️ Email Archilles</>
-                                            )}
-                                        </motion.button>
+                                            <FaEnvelope /> Email Archilles
+                                        </motion.a>
                                     )}
                                 </div>
                             ))}
