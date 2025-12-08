@@ -50,7 +50,7 @@
 }
 
 .actions {
-    display: none;
+    display: none !important;
 }
 
 .mobileToggle {
@@ -96,12 +96,16 @@
     }
 
     .actions {
-        display: flex;
+        display: flex !important;
         align-items: center;
         gap: 1rem;
     }
 
     .mobileToggle {
+        display: none;
+    }
+
+    .mobileMenu {
         display: none;
     }
 }
