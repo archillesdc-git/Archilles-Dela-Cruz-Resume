@@ -105,12 +105,28 @@ export default function AIAssistant() {
         setIsTyping(true);
 
         try {
+            // Check if user is asking about weather
+            const isWeatherQuestion = /weather|clima|ulan|rain|sunny|hot|cold|init|lamig|maulan|temperatura|temperature/i.test(userMessage);
+            let weatherContext = '';
+
+            if (isWeatherQuestion) {
+                try {
+                    const weatherRes = await fetch('/api/weather');
+                    const weather = await weatherRes.json();
+                    if (!weather.fallback) {
+                        weatherContext = ` [CURRENT WEATHER IN GENSAN: ${weather.icon} ${weather.description}, ${weather.temp}°C]`;
+                    }
+                } catch {
+                    // Weather fetch failed, continue without it
+                }
+            }
+
             // Prepare conversation history for API (last 10 messages for context)
             const conversationHistory = messages.slice(-10).map(msg => ({
                 role: msg.role,
                 content: msg.content
             }));
-            conversationHistory.push({ role: 'user', content: userMessage });
+            conversationHistory.push({ role: 'user', content: userMessage + weatherContext });
 
             const response = await fetch('/api/chat', {
                 method: 'POST',
