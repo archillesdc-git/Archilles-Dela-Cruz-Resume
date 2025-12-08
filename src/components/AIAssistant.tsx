@@ -2,14 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPaperPlane, FaTimes, FaEnvelope, FaSpinner } from 'react-icons/fa';
+import { FaPaperPlane, FaTimes } from 'react-icons/fa';
 import emailjs from '@emailjs/browser';
 import styles from './AIAssistant.module.css';
 
 interface Message {
     role: 'ai' | 'user';
     content: string;
-    showEmailButton?: boolean;
 }
 
 // EmailJS Configuration
@@ -20,13 +19,13 @@ const EMAILJS_PUBLIC_KEY = "zseLnDIgoVQw3j6Vz";
 export default function AIAssistant() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { role: 'ai', content: `Hey! 👋 I'm AI'k, Archilles' AI assistant. Ask me anything about him - his skills, experience, projects, or if you wanna reach out! What's up? 🚀`, showEmailButton: false }
+        { role: 'ai', content: `Hello! 👋 I'm AI'k, Archilles' AI assistant. I can tell you about his skills, experience, and projects. If you'd like to contact him, just let me know!` }
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [isSendingEmail, setIsSendingEmail] = useState(false);
-    const [pendingEmailMessage, setPendingEmailMessage] = useState('');
-    const [emailCopied, setEmailCopied] = useState(false);
+    const [collectingContact, setCollectingContact] = useState(false);
+    const [contactInfo, setContactInfo] = useState({ name: '', email: '', message: '' });
+    const [contactStep, setContactStep] = useState(0); // 0=not collecting, 1=ask name, 2=ask email, 3=ask message
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -37,63 +36,46 @@ export default function AIAssistant() {
         scrollToBottom();
     }, [messages]);
 
-    // Check if message indicates user wants to contact/email
-    const shouldShowEmailButton = (message: string): boolean => {
+    // Check if user wants to contact
+    const wantsToContact = (message: string): boolean => {
         const lower = message.toLowerCase();
-        return lower.includes('email') ||
-            lower.includes('contact') ||
-            lower.includes('reach') ||
+        return lower.includes('contact') ||
+            lower.includes('email') ||
             lower.includes('hire') ||
+            lower.includes('reach') ||
+            lower.includes('message') ||
+            lower.includes('get in touch') ||
+            lower.includes('talk to') ||
             lower.includes('project') ||
-            lower.includes('message him') ||
-            lower.includes('get in touch');
+            lower.includes('work with') ||
+            lower.includes('services');
     };
 
-    const handleSendEmail = async () => {
-        if (!pendingEmailMessage) return;
-        setIsSendingEmail(true);
+    // Extract email from text
+    const extractEmail = (text: string): string | null => {
+        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+        const match = text.match(emailRegex);
+        return match ? match[0] : null;
+    };
 
+    // Send email via EmailJS
+    const sendContactEmail = async (name: string, email: string, message: string) => {
         try {
-            // Fetch current weather
-            let weatherInfo = '';
-            try {
-                const weatherRes = await fetch('/api/weather');
-                const weather = await weatherRes.json();
-                if (weather.icon && weather.description) {
-                    weatherInfo = ` ${weather.icon} It's currently ${weather.description} (${weather.temp}°C) in GenSan right now!`;
-                }
-            } catch {
-                // Weather fetch failed, continue without it
-            }
-
             await emailjs.send(
                 EMAILJS_SERVICE_ID,
                 EMAILJS_TEMPLATE_ID,
                 {
-                    from_name: "Portfolio Visitor (via AI'k)",
-                    from_email: "ai-assistant@portfolio.com",
-                    message: pendingEmailMessage,
-                    subject: "🤖 New Message via AI'k Assistant - Portfolio"
+                    from_name: name,
+                    from_email: email,
+                    message: `New inquiry from ${name} (${email}):\n\n${message}`,
+                    subject: `🚀 New Contact from ${name} via AI'k`
                 },
                 EMAILJS_PUBLIC_KEY
             );
-
-            setMessages(prev => [...prev, {
-                role: 'ai',
-                content: `Done! ✅ Your message has been sent to Archilles!${weatherInfo} He usually responds quickly. Anything else I can help you with? 😊`,
-                showEmailButton: false
-            }]);
-
-            setPendingEmailMessage('');
+            return true;
         } catch (error) {
             console.error('EmailJS Error:', error);
-            setMessages(prev => [...prev, {
-                role: 'ai',
-                content: `Oops! 😅 Something went wrong while sending. You can try again or email him directly at archillesdelacruz@outlook.com`,
-                showEmailButton: false
-            }]);
-        } finally {
-            setIsSendingEmail(false);
+            return false;
         }
     };
 
@@ -106,32 +88,86 @@ export default function AIAssistant() {
         setIsTyping(true);
 
         try {
-            // Expanded weather keyword detection (Tagalog, English, common variations)
-            const weatherKeywords = /weather|clima|climate|panahon|ulan|ulap|rain|raining|sunny|araw|hot|cold|init|mainit|lamig|malamig|maulan|temperatura|temperature|forecast|storm|bagyo|thunder|kidlat|cloudy|maulap|humid|halumigmig|dyan ba|dyan ngayon|sa gensan|sa lugar/i;
-            const isWeatherQuestion = weatherKeywords.test(userMessage);
+            // STEP 1: Check if we're in contact collection mode
+            if (collectingContact) {
+                if (contactStep === 1) {
+                    // Collecting name
+                    setContactInfo(prev => ({ ...prev, name: userMessage }));
+                    setContactStep(2);
+                    setMessages(prev => [...prev, {
+                        role: 'ai',
+                        content: `Nice to meet you, ${userMessage}! 📧 What's your email address so Archilles can get back to you?`
+                    }]);
+                    setIsTyping(false);
+                    return;
+                } else if (contactStep === 2) {
+                    // Collecting email
+                    const email = extractEmail(userMessage) || userMessage;
+                    if (!email.includes('@')) {
+                        setMessages(prev => [...prev, {
+                            role: 'ai',
+                            content: `That doesn't look like a valid email. Please provide a valid email address:`
+                        }]);
+                        setIsTyping(false);
+                        return;
+                    }
+                    setContactInfo(prev => ({ ...prev, email: email }));
+                    setContactStep(3);
+                    setMessages(prev => [...prev, {
+                        role: 'ai',
+                        content: `Got it! ✍️ What would you like to tell Archilles? Type your message:`
+                    }]);
+                    setIsTyping(false);
+                    return;
+                } else if (contactStep === 3) {
+                    // Collecting message and sending
+                    const finalInfo = { ...contactInfo, message: userMessage };
+                    setMessages(prev => [...prev, {
+                        role: 'ai',
+                        content: `Sending your message to Archilles... ⏳`
+                    }]);
 
-            let weatherData = null;
-            let weatherContext = '';
+                    const success = await sendContactEmail(finalInfo.name, finalInfo.email, finalInfo.message);
 
-            if (isWeatherQuestion) {
-                try {
-                    const weatherRes = await fetch('/api/weather');
-                    weatherData = await weatherRes.json();
+                    if (success) {
+                        setMessages(prev => [...prev, {
+                            role: 'ai',
+                            content: `✅ Done! Your message has been sent to Archilles! He'll get back to you at ${finalInfo.email} soon. Is there anything else you'd like to know?`
+                        }]);
+                    } else {
+                        setMessages(prev => [...prev, {
+                            role: 'ai',
+                            content: `❌ Sorry, there was an issue sending your message. Please try emailing directly at archillesdelacruz@outlook.com`
+                        }]);
+                    }
 
-                    // Always include weather info when asked (even fallback gives GenSan typical weather)
-                    weatherContext = `\n\n[SYSTEM: User is asking about weather. Current weather in General Santos City, Philippines: ${weatherData.icon} ${weatherData.description}, Temperature: ${weatherData.temp}°C. Use this EXACT data in your response. Respond naturally in the user's language (Tagalog/English/Taglish).]`;
-                } catch {
-                    // Weather fetch failed, use typical GenSan weather
-                    weatherContext = `\n\n[SYSTEM: User is asking about weather. General Santos City typically has tropical weather, around 27-32°C. Respond naturally.]`;
+                    // Reset contact flow
+                    setCollectingContact(false);
+                    setContactStep(0);
+                    setContactInfo({ name: '', email: '', message: '' });
+                    setIsTyping(false);
+                    return;
                 }
             }
 
-            // Prepare conversation history for API (last 10 messages for context)
+            // STEP 2: Check if user wants to contact (start collection)
+            if (wantsToContact(userMessage) && !collectingContact) {
+                setCollectingContact(true);
+                setContactStep(1);
+                setMessages(prev => [...prev, {
+                    role: 'ai',
+                    content: `Great! I'd be happy to help you get in touch with Archilles. 📝 First, what's your name?`
+                }]);
+                setIsTyping(false);
+                return;
+            }
+
+            // STEP 3: Normal AI conversation
             const conversationHistory = messages.slice(-10).map(msg => ({
                 role: msg.role,
                 content: msg.content
             }));
-            conversationHistory.push({ role: 'user', content: userMessage + weatherContext });
+            conversationHistory.push({ role: 'user', content: userMessage });
 
             const response = await fetch('/api/chat', {
                 method: 'POST',
@@ -144,33 +180,13 @@ export default function AIAssistant() {
             }
 
             const data = await response.json();
-            const aiResponse = data.message;
-
-            // Check if we should show email button
-            const showEmail = shouldShowEmailButton(userMessage) || shouldShowEmailButton(aiResponse);
-
-            // If user seems to be composing a message, save it for email
-            if (userMessage.length > 50 && (
-                messages[messages.length - 1]?.content.toLowerCase().includes('message') ||
-                messages[messages.length - 1]?.content.toLowerCase().includes('tell him') ||
-                messages[messages.length - 1]?.content.toLowerCase().includes('send')
-            )) {
-                setPendingEmailMessage(userMessage);
-            }
-
-            setMessages(prev => [...prev, {
-                role: 'ai',
-                content: aiResponse,
-                showEmailButton: showEmail
-            }]);
+            setMessages(prev => [...prev, { role: 'ai', content: data.message }]);
 
         } catch (error) {
             console.error('Chat Error:', error);
-            // Fallback response if API fails
             setMessages(prev => [...prev, {
                 role: 'ai',
-                content: `Hmm, I'm having trouble connecting right now. 😅 But you can always reach Archilles directly at archillesdelacruz@outlook.com!`,
-                showEmailButton: true
+                content: `I'm having trouble connecting. You can reach Archilles directly at archillesdelacruz@outlook.com`
             }]);
         } finally {
             setIsTyping(false);
@@ -188,11 +204,9 @@ export default function AIAssistant() {
         <>
             <motion.button
                 className={styles.floatingButton}
-                onClick={() => setIsOpen(true)}
-                whileHover={{ scale: 1.1 }}
+                onClick={() => setIsOpen(!isOpen)}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? 20 : 0 }}
                 style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
             >
                 <span className={styles.buttonLabel}>ASK AI'K</span>
@@ -216,7 +230,7 @@ export default function AIAssistant() {
                                     <h4 className={styles.aiName}>AI'k Assistant</h4>
                                     <span className={styles.aiStatus}>
                                         <span className={styles.statusDot}></span>
-                                        {isTyping ? '✨ Thinking...' : '🟢 Online'}
+                                        {isTyping ? 'Typing...' : 'Online'}
                                     </span>
                                 </div>
                             </div>
@@ -227,36 +241,15 @@ export default function AIAssistant() {
 
                         <div className={styles.messages}>
                             {messages.map((msg, idx) => (
-                                <div key={idx}>
-                                    <motion.div
-                                        className={`${styles.message} ${msg.role === 'ai' ? styles.aiMessage : styles.userMessage}`}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        {msg.content}
-                                    </motion.div>
-                                    {msg.showEmailButton && msg.role === 'ai' && (
-                                        <motion.button
-                                            className={styles.emailButton}
-                                            onClick={async () => {
-                                                try {
-                                                    await navigator.clipboard.writeText('archillesdelacruz@outlook.com');
-                                                    setEmailCopied(true);
-                                                    setTimeout(() => setEmailCopied(false), 2000);
-                                                } catch {
-                                                    // Fallback: open mailto
-                                                    window.open('mailto:archillesdelacruz@outlook.com?subject=Inquiry%20from%20Portfolio');
-                                                }
-                                            }}
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3, delay: 0.2 }}
-                                        >
-                                            <FaEnvelope /> {emailCopied ? '✓ Email Copied!' : 'Copy Email'}
-                                        </motion.button>
-                                    )}
-                                </div>
+                                <motion.div
+                                    key={idx}
+                                    className={`${styles.message} ${msg.role === 'ai' ? styles.aiMessage : styles.userMessage}`}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    {msg.content}
+                                </motion.div>
                             ))}
                             {isTyping && (
                                 <div className={`${styles.message} ${styles.aiMessage} ${styles.typing}`}>
@@ -274,17 +267,18 @@ export default function AIAssistant() {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Ask me anything about Archilles..."
+                                placeholder={collectingContact ? "Type here..." : "Ask me anything about Archilles..."}
                                 className={styles.input}
-                                disabled={isTyping}
                             />
-                            <button
+                            <motion.button
                                 className={styles.sendButton}
                                 onClick={handleSend}
-                                disabled={!input.trim() || isTyping}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                disabled={!input.trim()}
                             >
-                                {isTyping ? <FaSpinner className={styles.spinner} /> : <FaPaperPlane />}
-                            </button>
+                                <FaPaperPlane />
+                            </motion.button>
                         </div>
                     </motion.div>
                 )}
