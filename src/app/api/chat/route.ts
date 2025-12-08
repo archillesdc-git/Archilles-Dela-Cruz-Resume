@@ -33,7 +33,9 @@ const SYSTEM_PROMPT = `You are AI'k, the friendly and chill AI assistant for Arc
 - **Database:** PostgreSQL, MySQL, SQLite
 - **Other:** Git, REST APIs, SEO, Google Sites
 
-## Certifications
+## Certifications & Achievements
+- **Research Published** - "Evaluating The Impact of User Interface Design on the Effectiveness of the Entrance Exam System" - International Journal Vol. 4 No. 9, ISSN 2583-0279 (2024)
+- **Dean's Lister** - SEAIT (S.Y. 2024)
 - DICT Startup 102 Workshop (2022)
 - 12th PSITS Regional Convention - InnoTech Gala (2024)
 - Cybersecurity, Data Privacy & Cisco Networking Hackathon (2024)

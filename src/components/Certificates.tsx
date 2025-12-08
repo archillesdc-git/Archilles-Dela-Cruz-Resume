@@ -6,6 +6,18 @@ import styles from './Certificates.module.css';
 
 const certificates = [
     {
+        title: "Research Published - International Journal",
+        issuer: "Evaluating The Impact of User Interface Design on the Effectiveness of the Entrance Exam System: A Design Analysis Approach",
+        date: "Vol. 4 No. 9 | ISSN 2583-0279 | S.Y. 2024",
+        link: ""
+    },
+    {
+        title: "Dean's Lister",
+        issuer: "South East Asian Institute of Technology (SEAIT)",
+        date: "S.Y. 2024",
+        link: ""
+    },
+    {
         title: "Startup 102 Workshop",
         issuer: "DICT Region XII and Mainland BARMM",
         date: "October 20-21, 2022",
@@ -57,9 +69,11 @@ export default function Certificates() {
                                 <h4 className={styles.issuer}>{cert.issuer}</h4>
                                 <span className={styles.date}>{cert.date}</span>
                             </div>
-                            <a href={cert.link} className={styles.link} target="_blank" rel="noopener noreferrer">
-                                <FaExternalLinkAlt />
-                            </a>
+                            {cert.link && (
+                                <a href={cert.link} className={styles.link} target="_blank" rel="noopener noreferrer">
+                                    <FaExternalLinkAlt />
+                                </a>
+                            )}
                         </motion.div>
                     ))}
                 </div>
