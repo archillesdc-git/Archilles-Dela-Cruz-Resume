@@ -5,8 +5,18 @@
     right: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-    padding: 1.5rem 0;
-    background: transparent;
+    padding: 1rem 0;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+@media (min-width: 768px) {
+    .header {
+        padding: 1.5rem 0;
+        background: transparent;
+        backdrop-filter: none;
+    }
 }
 
 .scrolled {
