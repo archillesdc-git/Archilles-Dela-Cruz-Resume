@@ -85,9 +85,52 @@ export async function POST(request: NextRequest) {
 
         const { messages } = await request.json();
 
-        // Prepare messages with system prompt
+        // Get current time in Philippines timezone
+        const now = new Date();
+        const phTime = now.toLocaleString('en-PH', {
+            timeZone: 'Asia/Manila',
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        // Fetch current weather
+        let weatherInfo = 'Weather data unavailable';
+        try {
+            const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+            if (OPENWEATHER_API_KEY) {
+                const weatherRes = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=General%20Santos%20City,PH&appid=${OPENWEATHER_API_KEY}&units=metric`
+                );
+                if (weatherRes.ok) {
+                    const weatherData = await weatherRes.json();
+                    const weatherIcons: { [key: string]: string } = {
+                        'Clear': '☀️', 'Clouds': '☁️', 'Rain': '🌧️', 'Drizzle': '🌦️',
+                        'Thunderstorm': '⛈️', 'Mist': '🌫️', 'Fog': '🌫️', 'Haze': '🌫️'
+                    };
+                    const icon = weatherIcons[weatherData.weather[0]?.main] || '🌤️';
+                    weatherInfo = `${icon} ${weatherData.weather[0]?.description}, ${Math.round(weatherData.main?.temp)}°C`;
+                }
+            }
+        } catch (e) {
+            console.error('Weather fetch error:', e);
+        }
+
+        // Create dynamic context with real-time info
+        const realTimeContext = `
+
+## REAL-TIME INFORMATION (Always use this data when relevant!)
+- **Current Date & Time:** ${phTime} (Philippines Time)
+- **Current Weather in GenSan:** ${weatherInfo}
+- **Archilles' Location:** General Santos City, Philippines`;
+
+        // Prepare messages with system prompt + real-time context
         const groqMessages: Message[] = [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: SYSTEM_PROMPT + realTimeContext },
             ...messages.map((msg: { role: string; content: string }) => ({
                 role: msg.role === 'ai' ? 'assistant' : msg.role,
                 content: msg.content
