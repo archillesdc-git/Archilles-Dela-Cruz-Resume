@@ -53,6 +53,18 @@ export default function AIAssistant() {
         setIsSendingEmail(true);
 
         try {
+            // Fetch current weather
+            let weatherInfo = '';
+            try {
+                const weatherRes = await fetch('/api/weather');
+                const weather = await weatherRes.json();
+                if (weather.icon && weather.description) {
+                    weatherInfo = ` ${weather.icon} It's currently ${weather.description} (${weather.temp}°C) in GenSan right now!`;
+                }
+            } catch {
+                // Weather fetch failed, continue without it
+            }
+
             await emailjs.send(
                 EMAILJS_SERVICE_ID,
                 EMAILJS_TEMPLATE_ID,
@@ -67,7 +79,7 @@ export default function AIAssistant() {
 
             setMessages(prev => [...prev, {
                 role: 'ai',
-                content: `Done! ✅ Your message has been sent to Archilles! He usually responds quickly. Anything else I can help you with? �`,
+                content: `Done! ✅ Your message has been sent to Archilles!${weatherInfo} He usually responds quickly. Anything else I can help you with? 😊`,
                 showEmailButton: false
             }]);
 
