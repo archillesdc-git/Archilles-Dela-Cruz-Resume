@@ -9,13 +9,25 @@ const certificates = [
         title: "Research Published - International Journal",
         issuer: "Evaluating The Impact of User Interface Design on the Effectiveness of the Entrance Exam System: A Design Analysis Approach",
         date: "Vol. 4 No. 9 | ISSN 2583-0279 | S.Y. 2024",
-        link: ""
+        link: "https://drive.google.com/file/d/1UWfdU4YO4nFiXLVlYu4HwclDOSBsCoAZ/view?usp=sharing"
     },
     {
         title: "Dean's Lister",
         issuer: "South East Asian Institute of Technology (SEAIT)",
         date: "S.Y. 2024",
         link: ""
+    },
+    {
+        title: "Certificate of Graduation",
+        issuer: "South East Asian Institute of Technology (SEAIT)",
+        date: "2024",
+        link: "https://drive.google.com/file/d/1YOPebVYw9_0nFdCO14P9uIW749QCuxn3/view?usp=sharing"
+    },
+    {
+        title: "OJT Certificate of Completion",
+        issuer: "BAC Secretariat - Administrative & Procurement Support",
+        date: "February - June 2024",
+        link: "https://drive.google.com/file/d/1OBxcZHMUcLB_ate6VCBDWujcwh8sVzqu/view?usp=sharing"
     },
     {
         title: "Startup 102 Workshop",
