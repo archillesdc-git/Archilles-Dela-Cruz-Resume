@@ -7,6 +7,14 @@ import styles from './Projects.module.css';
 
 const projects = [
     {
+        title: "Tasking Calendar",
+        description: "A productivity tool for organizing, scheduling, and visualizing tasks with deadlines. Features calendar view, multiple themes, cloud sync, notes & folders, and Google authentication.",
+        image: "/tasking-calendar.png",
+        tech: ["Next.js", "TypeScript", "tRPC", "Tailwind CSS", "Firebase"],
+        github: "https://github.com/archillesdc-git/task-calendar",
+        demo: null
+    },
+    {
         title: "SaaS Analytics Dashboard",
         description: "A comprehensive analytics platform for tracking user engagement and retention. Features real-time data visualization and customizable reporting.",
         image: "/project1.png",
@@ -77,9 +85,11 @@ export default function Projects() {
                                     <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn btn-outline text-sm py-2 px-4 flex items-center gap-2">
                                         <FaGithub /> Code
                                     </a>
-                                    <a href={project.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary text-sm py-2 px-4 flex items-center gap-2">
-                                        <FaExternalLinkAlt /> Live Demo
-                                    </a>
+                                    {project.demo && (
+                                        <a href={project.demo} target="_blank" rel="noopener noreferrer" className="btn btn-primary text-sm py-2 px-4 flex items-center gap-2">
+                                            <FaExternalLinkAlt /> Live Demo
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
