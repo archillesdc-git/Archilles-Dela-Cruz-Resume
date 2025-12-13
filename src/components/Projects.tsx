@@ -13,30 +13,6 @@ const projects = [
         tech: ["Next.js", "TypeScript", "tRPC", "Tailwind CSS", "Firebase"],
         github: "https://github.com/archillesdc-git/task-calendar",
         demo: null
-    },
-    {
-        title: "SaaS Analytics Dashboard",
-        description: "A comprehensive analytics platform for tracking user engagement and retention. Features real-time data visualization and customizable reporting.",
-        image: "/project1.png",
-        tech: ["Next.js", "TypeScript", "Chart.js", "Supabase"],
-        github: "https://github.com",
-        demo: "https://example.com"
-    },
-    {
-        title: "E-Commerce Platform",
-        description: "Full-featured online store with cart functionality, payment gateway integration, and admin dashboard for inventory management.",
-        image: "/project1.png", // Reuse for now
-        tech: ["React", "Node.js", "MongoDB", "Stripe"],
-        github: "https://github.com",
-        demo: "https://example.com"
-    },
-    {
-        title: "Task Management Application",
-        description: "Collaborative project management tool with drag-and-drop kanban boards, real-time updates, and team notifications.",
-        image: "/project1.png", // Reuse for now
-        tech: ["Vue.js", "Firebase", "Tailwind CSS"],
-        github: "https://github.com",
-        demo: "https://example.com"
     }
 ];
 
